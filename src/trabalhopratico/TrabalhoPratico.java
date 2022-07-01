@@ -420,6 +420,7 @@ public class TrabalhoPratico extends Application {
     }
     public TrabalhoPratico (){
         this.conectToServer();
+        //Teste
     }
     
     /**
