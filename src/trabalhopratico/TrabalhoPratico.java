@@ -435,7 +435,7 @@ public class TrabalhoPratico extends Application {
             } else {
                 a.setContentText("O Jogador 2 foi o vencedor!");
             }  
-            a.show();
+            a.show(); //por favor funciona
         }
     }
     
