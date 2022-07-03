@@ -20,6 +20,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.*;
 import javax.swing.JLabel;
 
@@ -45,13 +47,15 @@ public class TrabalhoPratico extends Application {
     private int turnsMade;
     private int player;
     
+ 
+    
     Alert a = new Alert(Alert.AlertType.NONE);
     private boolean moveDisabled = false;
     
     Button button = new Button("Ajuda");
     Button button2 = new Button("Sair");
     
-
+    Media media = null;
     
     Label labelPec = new Label("Peças");
     Label labelBra = new Label("Brancas -  " + pieceGroupW.getChildren().size());
@@ -225,7 +229,9 @@ public class TrabalhoPratico extends Application {
             
             this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
             turnsMade++;
-            
+             Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+            MediaPlayer move = new MediaPlayer(media); 
+            move.play();
                        
             System.out.println("Turnos feitos: " + turnsMade);
             
@@ -257,6 +263,9 @@ public class TrabalhoPratico extends Application {
           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
           turnsMade++;
           System.out.println("Turnos feitos: " + turnsMade);
+          Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+          MediaPlayer move = new MediaPlayer(media); 
+          move.play();
          /**  if(this.playerID == 1){
                 // imaginar que o 1 é o branco
                 for(Node p : pieceGroupW.getChildren()){
@@ -280,6 +289,9 @@ public class TrabalhoPratico extends Application {
            
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
+            Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+          MediaPlayer move = new MediaPlayer(media); 
+          move.play();
             System.out.println("Turnos feitos: " + turnsMade);
            /**  if(this.playerID == 1){
                 // imaginar que o 1 é o branco
@@ -326,6 +338,12 @@ public class TrabalhoPratico extends Application {
                System.out.println(" x0 - " + x0 + " e y0 - " +y0 );
                System.out.println("x1 - " + x1 + " e y1 - " +y1 );
                System.out.println("newX - " + newX + " e newY - " +newY );
+               
+                Media media2 = new Media("file:/C:/Users/35191/Documents/captura.mp3"); //replace /Movies/test.mp3 with your file
+                MediaPlayer captura = new MediaPlayer(media2); 
+                captura.play();
+        
+        
                return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
            }
        }
@@ -345,6 +363,9 @@ public class TrabalhoPratico extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
         
+        Media media4 = new Media("file:/C:/Users/35191/Documents/background.mp3"); //replace /Movies/test.mp3 with your file
+        MediaPlayer player = new MediaPlayer(media4); 
+        player.play();
         
         //Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
          EventHandler<ActionEvent> Evento = new EventHandler<ActionEvent>() {
