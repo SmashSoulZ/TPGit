@@ -239,6 +239,7 @@ public class TrabalhoPratico extends Application {
                     ((Piece)p).setMoveDisabled(true);
                 }
             }**/
+            
             return new MoveResult(MoveType.None);
             
         }
@@ -266,6 +267,7 @@ public class TrabalhoPratico extends Application {
                     ((Piece)p).setMoveDisabled(true);
                 }
             }**/
+            
            return new MoveResult(MoveType.Normal);
        } else if ((Math.abs(newY - y0) == 2 || Math.abs(newX - x0) == 2 )) {
            
@@ -314,6 +316,10 @@ public class TrabalhoPratico extends Application {
                     ((Piece)p).setMoveDisabled(true);
                 }
             }**/
+               verificaFim(pieceGroupW.getChildren().size(), piece);
+               verificaFim(pieceGroupB.getChildren().size(), piece);
+               System.out.println("Verificou"+ pieceGroupW.getChildren().size() + piece.getType());
+               System.out.println("Verificou"+ pieceGroupB.getChildren().size() + piece.getType());
                return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
            }
        }
@@ -421,21 +427,15 @@ public class TrabalhoPratico extends Application {
         return piece;
     }
     
-    public void alerta(){
-        if (this.pieceGroupB.getChildren().size() == 0){
-               
+    public void verificaFim(int n, Piece piece){
+        if (n == 1){ 
             a.setAlertType(Alert.AlertType.INFORMATION);
-            
-            a.setContentText("O Jogador 1 foi o vencedor!");
- 
-                // show the dialog
-               a.show();
-        }
-        if (this.pieceGroupW.getChildren().size() == 0){
-               a.setAlertType(Alert.AlertType.INFORMATION);
-               a.setContentText("O Jogador 2 foi o vencedor!");
-                // show the dialog
-               a.show();
+            if (piece.getType() == PieceType.White){
+                a.setContentText("O Jogador 1 foi o vencedor!");
+            } else {
+                a.setContentText("O Jogador 2 foi o vencedor!");
+            }  
+            a.show();
         }
     }
     
@@ -445,7 +445,7 @@ public class TrabalhoPratico extends Application {
     }
     public TrabalhoPratico (){
         this.conectToServer();
-        this.alerta();
+        
        
     }
     
