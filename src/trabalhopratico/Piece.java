@@ -67,6 +67,8 @@ public class Piece extends StackPane {
                         relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
                     else
                         System.out.println("Movimento da peça desativado");
+                    
+                    
                 });
     }
     

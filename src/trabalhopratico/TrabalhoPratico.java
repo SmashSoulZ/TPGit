@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.*;
@@ -43,7 +44,7 @@ public class TrabalhoPratico extends Application {
     private int turnsMade;
     private int player;
     
-    
+    Alert a = new Alert(Alert.AlertType.NONE);
     private boolean moveDisabled = false;
     
     Button button = new Button("Ajuda");
@@ -53,13 +54,18 @@ public class TrabalhoPratico extends Application {
     Label labelBra = new Label("Brancas -  " + pieceGroupW.getChildren().size());
     Label labelPre = new Label("Pretas   -  " + pieceGroupB.getChildren().size());
         
-       
+     
     public void conectToServer(){
         csc = new ClientSideConnection();
         
         this.playerID = csc.getPlayerID();
         if (this.playerID==1){
-            
+            for (Node p : pieceGroupW.getChildren()){
+                    ((Piece)p).setMoveDisabled(true);
+                }
+                for(Node p : pieceGroupB.getChildren()){
+                    ((Piece)p).setMoveDisabled(true);
+            }
             this.otherPlayer = 2;
             
             this.label.setText("És o jogador 1. Começa a partida");
@@ -70,6 +76,8 @@ public class TrabalhoPratico extends Application {
             this.otherPlayer = 1;
            
          }
+        
+         
     }
     
   
@@ -214,7 +222,7 @@ public class TrabalhoPratico extends Application {
                        
             System.out.println("Turnos feitos: " + turnsMade);
             
-            if(this.playerID == 1){
+         /**   if(this.playerID == 1){
                 // imaginar que o 1 é o branco
                 for(Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
@@ -230,7 +238,7 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
-            }
+            }**/
             return new MoveResult(MoveType.None);
             
         }
@@ -241,7 +249,7 @@ public class TrabalhoPratico extends Application {
           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
           turnsMade++;
           System.out.println("Turnos feitos: " + turnsMade);
-           if(this.playerID == 1){
+         /**  if(this.playerID == 1){
                 // imaginar que o 1 é o branco
                 for(Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
@@ -257,14 +265,14 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
-            }
+            }**/
            return new MoveResult(MoveType.Normal);
        } else if ((Math.abs(newY - y0) == 2 || Math.abs(newX - x0) == 2 )) {
            
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
             System.out.println("Turnos feitos: " + turnsMade);
-             if(this.playerID == 1){
+           /**  if(this.playerID == 1){
                 // imaginar que o 1 é o branco
                 for(Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
@@ -280,7 +288,7 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
-            }
+            }**/
            int x1 = x0 + (newX - x0) / 2;
            int y1 = y0 + (newX - y0) / 2;
            
@@ -289,7 +297,7 @@ public class TrabalhoPratico extends Application {
                this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
                turnsMade++;
             System.out.println("Turnos feitos: " + turnsMade);
-             if(this.playerID == 1){
+           /**  if(this.playerID == 1){
                 // imaginar que o 1 é o branco
                 for(Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
@@ -305,7 +313,7 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
-            }
+            }**/
                return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
            }
        }
@@ -413,6 +421,23 @@ public class TrabalhoPratico extends Application {
         return piece;
     }
     
+    public void alerta(){
+        if (this.pieceGroupB.getChildren().size() == 0){
+               
+            a.setAlertType(Alert.AlertType.INFORMATION);
+            
+            a.setContentText("O Jogador 1 foi o vencedor!");
+ 
+                // show the dialog
+               a.show();
+        }
+        if (this.pieceGroupW.getChildren().size() == 0){
+               a.setAlertType(Alert.AlertType.INFORMATION);
+               a.setContentText("O Jogador 2 foi o vencedor!");
+                // show the dialog
+               a.show();
+        }
+    }
     
     private void atualizaDados(){
         labelBra.setText("Brancas -  " + pieceGroupW.getChildren().size());
@@ -420,7 +445,8 @@ public class TrabalhoPratico extends Application {
     }
     public TrabalhoPratico (){
         this.conectToServer();
-        //Teste
+        this.alerta();
+       
     }
     
     /**
