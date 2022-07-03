@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.*;
+import javax.swing.JLabel;
 
 /**
  *
@@ -49,6 +50,8 @@ public class TrabalhoPratico extends Application {
     
     Button button = new Button("Ajuda");
     Button button2 = new Button("Sair");
+    
+
     
     Label labelPec = new Label("Peças");
     Label labelBra = new Label("Brancas -  " + pieceGroupW.getChildren().size());
@@ -119,8 +122,8 @@ public class TrabalhoPratico extends Application {
         }
     }
    
-    
 
+    
      public Parent createContent(){
         Pane root = new Pane();
         root.setPrefSize(Width * Tile_Size + 100, Height * Tile_Size + 40);
@@ -136,15 +139,19 @@ public class TrabalhoPratico extends Application {
         button2.setLayoutX(560);
         
         root.getChildren().addAll(tileGroup, pieceGroupW, pieceGroupB, label, button, button2);
-        
+      
+         
        
         
         
         
         for (int y=0; y< Height; y++){
             for (int x=0; x< Width; x++){
-                Tile tile = new Tile((x+y)% 2 == 0, x,y);
+                Tile tile = new Tile((x+y)% 2 == 0, x,y);          
                 board[x][y]= tile;
+;
+                
+                
                 tileGroup.getChildren().add(tile);
                 
                 
@@ -269,7 +276,7 @@ public class TrabalhoPratico extends Application {
             }**/
             
            return new MoveResult(MoveType.Normal);
-       } else if ((Math.abs(newY - y0) == 2 || Math.abs(newX - x0) == 2 )) {
+       } else if (Math.abs(newY - y0) == 2 && !(Math.abs(newX - x0) == 1) || Math.abs(newX - x0) == 2 && !(Math.abs(y0 - newY) == 1)) {
            
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
@@ -292,7 +299,7 @@ public class TrabalhoPratico extends Application {
                 }
             }**/
            int x1 = x0 + (newX - x0) / 2;
-           int y1 = y0 + (newX - y0) / 2;
+           int y1 = y0 + (newY - y0) / 2;
            
            
            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
@@ -316,10 +323,9 @@ public class TrabalhoPratico extends Application {
                     ((Piece)p).setMoveDisabled(true);
                 }
             }**/
-               verificaFim(pieceGroupW.getChildren().size(), piece);
-               verificaFim(pieceGroupB.getChildren().size(), piece);
-               System.out.println("Verificou"+ pieceGroupW.getChildren().size() + piece.getType());
-               System.out.println("Verificou"+ pieceGroupB.getChildren().size() + piece.getType());
+               System.out.println(" x0 - " + x0 + " e y0 - " +y0 );
+               System.out.println("x1 - " + x1 + " e y1 - " +y1 );
+               System.out.println("newX - " + newX + " e newY - " +newY );
                return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
            }
        }
@@ -410,6 +416,7 @@ public class TrabalhoPratico extends Application {
                     piece.move(newX, newY);
                     board[x0][y0].setPiece(null);
                     board[newX][newY].setPiece(piece);
+                    
                     Piece otherPiece = result.getPiece();
                     if (otherPiece.getType() == PieceType.Black){
                         board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
@@ -419,6 +426,8 @@ public class TrabalhoPratico extends Application {
                         pieceGroupW.getChildren().remove(otherPiece);
                     }
                     atualizaDados();
+                    verificaFim(pieceGroupW.getChildren().size(), piece);
+                    verificaFim(pieceGroupB.getChildren().size(), piece);
                     break;
             }
             }  
@@ -427,13 +436,13 @@ public class TrabalhoPratico extends Application {
         return piece;
     }
     
-    public void verificaFim(int n, Piece piece){
-        if (n == 1){ 
+    public void verificaFim(int n,Piece piece){
+        if (n == 0){ 
             a.setAlertType(Alert.AlertType.INFORMATION);
             if (piece.getType() == PieceType.White){
-                a.setContentText("O Jogador 1 foi o vencedor!");
+                a.setContentText("O Jogador 1 (Brancas) - foi o vencedor!");
             } else {
-                a.setContentText("O Jogador 2 foi o vencedor!");
+                a.setContentText("O Jogador 2 (Pretas) - foi o vencedor!");
             }  
             a.show(); //por favor funciona push
         }
