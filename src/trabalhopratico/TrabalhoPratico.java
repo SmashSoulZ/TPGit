@@ -347,7 +347,9 @@ public class TrabalhoPratico extends Application {
            System.out.println(" board[x1][y1].getPiece() "+ board[x1][y1].getPiece() + " board[x1][y1].hasPiece() "+ board[x1][y1].hasPiece());
            System.out.println("x1 - " + x1 + " e y1 - " + y1 );
            
+           System.out.println(pieceGroupW);
 
+           //if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
                System.out.println("Kill");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
