@@ -1,4 +1,3 @@
-
 package trabalhopratico;
 
 /**
@@ -7,13 +6,16 @@ package trabalhopratico;
  */
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameServer {
     
     private ServerSocket ss;
     private int numPlayers;
-    private ServerSideConnection player1;
-    private ServerSideConnection player2;
+    protected ServerSideConnection player1;
+    protected ServerSideConnection player2;
   
     
     public GameServer(){
@@ -35,13 +37,15 @@ public class GameServer {
                Socket s = ss.accept();
                numPlayers ++;
                System.out.println("Jogador # " + numPlayers + "conectou-se");
-               ServerSideConnection ssc = new ServerSideConnection(s, numPlayers);
+               ServerSideConnection ssc = new ServerSideConnection(s, numPlayers, this);
                if (numPlayers == 1) {
                    player1=ssc;
                    
                }else {
                    player2 = ssc;
                }
+               
+               
                Thread t = new Thread(ssc);
                t.start();
                
@@ -59,10 +63,17 @@ public class GameServer {
         private DataInputStream dataIn;
         private DataOutputStream dataOut;
         private int playerID;
+        private boolean idEnviado = false;
+        private GameServer gs;
         
-        public ServerSideConnection(Socket s, int id){
+        public DataOutputStream getDataOutputStream() {
+            return this.dataOut;
+        }
+        
+        public ServerSideConnection(Socket s, int id, GameServer gs){
+            this.gs = gs;
             socket = s;
-            playerID= id;
+            playerID = id;
             try {
                 dataIn = new DataInputStream(socket.getInputStream());
                 dataOut = new DataOutputStream(socket.getOutputStream());
@@ -73,10 +84,24 @@ public class GameServer {
         }
         public void run(){
             try{
-                dataOut.writeInt(playerID);
-                dataOut.flush();
+                if(!idEnviado){
+                    idEnviado = true;
+                    dataOut.writeInt(playerID);
+                    dataOut.flush();
+                }
+                
+                // ficar à espera de receber dados
                 while (true){
-                    
+                    if(playerID == 1){
+                        System.out.println(gs.player2);
+                        // se é jogador 1, passar dados para o jogador 2
+                        if(gs.player2 != null)
+                            gs.player2.getDataOutputStream().writeInt(dataIn.readInt());
+                    } else {
+                        // se é jogador 2, passar dados para o jogador 1
+                        if(gs.player1 != null)
+                            gs.player1.getDataOutputStream().writeInt(dataIn.readInt());
+                    }
                 }
             } catch (IOException ex){
                 System.out.println("IO Exception from run() CSS");

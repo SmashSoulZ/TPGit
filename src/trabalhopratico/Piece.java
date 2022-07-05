@@ -21,6 +21,7 @@ public class Piece extends StackPane {
     
     private double mouseX, mouseY;
     private double oldX, oldY;
+    public int x,y;
     
     public PieceType getType(){
         return type;
@@ -35,6 +36,8 @@ public class Piece extends StackPane {
     
     public Piece(PieceType type, int x, int y){
         this.type= type;
+        this.x = x;
+        this.y = y;
         
         move(x, y);
         

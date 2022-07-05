@@ -22,6 +22,28 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import static javafx.scene.media.MediaPlayer.Status.PLAYING;
+import javafx.scene.text.*;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javax.swing.JLabel;
 
@@ -54,16 +76,23 @@ public class TrabalhoPratico extends Application {
     
     Button button = new Button("Ajuda");
     Button button2 = new Button("Sair");
+    Button button3 = new Button("C/som");
+    Button button4 = new Button("S/som");
     
     Media media = null;
     
     Label labelPec = new Label("Peças");
     Label labelBra = new Label("Brancas -  " + pieceGroupW.getChildren().size());
     Label labelPre = new Label("Pretas   -  " + pieceGroupB.getChildren().size());
+    Label labelSuas = new Label("Suas Peças");
         
+     Circle circleBrancas = new Circle();
+     Circle circlePretas = new Circle();
+     
      
     public void conectToServer(){
-        csc = new ClientSideConnection();
+       
+        csc = new ClientSideConnection(this);
         
         this.playerID = csc.getPlayerID();
         if (this.playerID==1){
@@ -87,53 +116,25 @@ public class TrabalhoPratico extends Application {
          
     }
     
-  
-    
-    private class ClientSideConnection {
-        
-        private Socket socket;
-        private DataInputStream dataIn;
-        private DataOutputStream dataOut;
-        private int playerID;
-        
-        public int getPlayerID(){
-            return this.playerID;
-            
+    /**public void closeConnection(){
+        try{
+            socket.close();
+            System.out.println("Conexão Terminada")
+        } catch (IOException ex ) {
+            System.out.println("IOException from closeConnection()");
         }
-        
-        public ClientSideConnection (){
-            System.out.println("---Cliente---");
-            try {
-                socket = new Socket ("localhost", 51734);
-                dataIn = new DataInputStream(socket.getInputStream());
-                dataOut = new DataOutputStream(socket.getOutputStream());
-                playerID = dataIn.readInt();
-                System.out.println("Conectado ao server como Jogador # " + playerID);
-                
-                /*if (playerID==1){
-                   label.setText("És o jogador 1. Começa a partida");
-                   otherPlayer = 2;
-                } else {
-                    label.setText("És o jogador 2. Espere pelo seu turno");
-                    otherPlayer = 1;
-                }*/
-                
-            } catch (IOException ex){
-                System.out.println("IO Exception from CSS");
-            }
-            
-            
-        }
-    }
-   
-
-    
+    }**/
      public Parent createContent(){
         Pane root = new Pane();
-        root.setPrefSize(Width * Tile_Size + 100, Height * Tile_Size + 40);
+        root.setPrefSize(Width * Tile_Size + 120, Height * Tile_Size + 40);
         label.setLayoutY(505);
         label.setLayoutX(5);
         label.setFont(new Font ("Verdana", 18));
+        
+        labelSuas.setLayoutY(180);
+        labelSuas.setLayoutX(510);
+        labelSuas.setFont(new Font ("Verdana", 18));
+        
         
         turnsMade = 0;
         
@@ -141,27 +142,26 @@ public class TrabalhoPratico extends Application {
         button.setLayoutX(505);
         button2.setLayoutY(470);
         button2.setLayoutX(560);
+        button3.setLayoutY(430);
+        button3.setLayoutX(505);
+        button4.setLayoutY(430);
+        button4.setLayoutX(560);
         
-        root.getChildren().addAll(tileGroup, pieceGroupW, pieceGroupB, label, button, button2);
+        root.getChildren().addAll(tileGroup, pieceGroupW, pieceGroupB, label,labelSuas, button, button2,button3, button4);
       
          
        
         
         
         
-        for (int y=0; y< Height; y++){
-            for (int x=0; x< Width; x++){
-                Tile tile = new Tile((x+y)% 2 == 0, x,y);          
-                board[x][y]= tile;
-;
-                
-                
+        for (int y = 0; y < Height; y++) {
+            for (int x = 0; x < Width; x++) {
+                Tile tile = new Tile((x + y) % 2 == 0, x, y);
+                board[x][y] = tile;
                 tileGroup.getChildren().add(tile);
-                
-                
-                
+
                 Piece piece = null;
-                
+
 //                if (y <= 1 || x <= 1 && y<=2){
 //                    piece = makePiece(PieceType.Black,x ,y);
 //                }
@@ -172,36 +172,43 @@ public class TrabalhoPratico extends Application {
 //                    tile.setPiece(piece);
 //                    pieceGroup.getChildren().add(piece);  
 //                }   
-                
-                if (y <= 0){
-                    piece = makePiece(PieceType.Black,x ,y);
+                if (y <= 0) {
+                    piece = makePiece(PieceType.Black, x, y);
                 }
-                if (y >= 4){
-                    piece = makePiece(PieceType.White,x ,y);
+                if (y >= 4) {
+                    piece = makePiece(PieceType.White, x, y);
                 }
-                if (piece != null){
+                if (piece != null) {
                     tile.setPiece(piece);
-                    
-                    if(tile.getPiece().getType() == PieceType.Black ){
+
+                    if (tile.getPiece().getType() == PieceType.Black) {
                         //System.out.println("Peça preta com exito");
+                        if(playerID == 1)
+                            piece.setMoveDisabled(true);
+                        else
+                            piece.setMoveDisabled(false);
                         pieceGroupB.getChildren().add(piece);
                     } else {
                         //System.out.println("Peça branca com exito"); 
+                        if(playerID == 2)
+                            piece.setMoveDisabled(true);
+                        else
+                            piece.setMoveDisabled(false);
                         pieceGroupW.getChildren().add(piece);
                     }
-                    
-                } 
+
+                }
 
                 tile.setOnMouseClicked(event -> {
-                    
+
                     System.out.println("------------------");
                     System.out.println("X : " + tile.getTileX());
                     System.out.println("Y : " + tile.getTileY());
                     System.out.println("------------------");
-                    
+
                 });
             }
-            
+
         }
         
         // Texto Lateral
@@ -216,7 +223,22 @@ public class TrabalhoPratico extends Application {
         labelPre.setLayoutY(90);
         labelPec.setFont(new Font("Verdana", 18));
         
-        root.getChildren().addAll(labelPec, labelBra, labelPre);
+        if(this.playerID==1){
+            circleBrancas.setCenterX(560);
+            circleBrancas.setCenterY(250);
+            circleBrancas.setRadius(30);
+            circlePretas.setFill(Color.WHITE);
+        }else{
+           circlePretas.setCenterX(560);
+            circlePretas.setCenterY(250);
+            circlePretas.setRadius(30); 
+            circlePretas.setFill(Color.BLACK);
+        }
+        
+        
+        
+        
+        root.getChildren().addAll(labelPec, labelBra, labelPre, circlePretas, circleBrancas);
         
         
         return root;
@@ -227,31 +249,29 @@ public class TrabalhoPratico extends Application {
     private MoveResult tryMove(Piece piece, int newX, int newY){
         if (board[newX][newY].hasPiece()){
             
-            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
-            turnsMade++;
-             Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
+           turnsMade++;
+            Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
             MediaPlayer move = new MediaPlayer(media); 
             move.play();
                        
             System.out.println("Turnos feitos: " + turnsMade);
             
-         /**   if(this.playerID == 1){
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
+             if (this.playerID==1){
+                 
+            for (Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
-                }
-            } else {
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
+                    ((Piece)p).setMoveDisabled(true);
+            }}
+            if (this.playerID==2){
+            for (Node p : pieceGroupW.getChildren()){
+                    ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
-                }
-            }**/
+            }}
             
             return new MoveResult(MoveType.None);
             
@@ -266,23 +286,20 @@ public class TrabalhoPratico extends Application {
           Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
-         /**  if(this.playerID == 1){
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
+            if (this.playerID==1){
+            for (Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
-                }
-            } else {
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
+                    ((Piece)p).setMoveDisabled(true);
+            }}
+                           if (this.playerID==2){
+            for (Node p : pieceGroupW.getChildren()){
+                    ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
-                }
-            }**/
+            }}
             
            return new MoveResult(MoveType.Normal);
        } else if (Math.abs(newY - y0) == 2 && !(Math.abs(newX - x0) == 1) || Math.abs(newX - x0) == 2 && !(Math.abs(y0 - newY) == 1)) {
@@ -293,48 +310,35 @@ public class TrabalhoPratico extends Application {
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
             System.out.println("Turnos feitos: " + turnsMade);
-           /**  if(this.playerID == 1){
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
+             if (this.playerID==1){
+            for (Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
-                }
-            } else {
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
-                }
-                for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
-                }
-            }**/
+            }}
            int x1 = x0 + (newX - x0) / 2;
            int y1 = y0 + (newY - y0) / 2;
            
            
            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
-               this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
-               turnsMade++;
+           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
+           turnsMade++;
             System.out.println("Turnos feitos: " + turnsMade);
-           /**  if(this.playerID == 1){
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
+               if (this.playerID==1){
+            for (Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
-                }
-            } else {
-                // imaginar que o 1 é o branco
-                for(Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(false);
+                    ((Piece)p).setMoveDisabled(true);
+            }}
+                      if (this.playerID==2){
+            for (Node p : pieceGroupW.getChildren()){
+                    ((Piece)p).setMoveDisabled(true);
                 }
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
-                }
-            }**/
+            }}
                System.out.println(" x0 - " + x0 + " e y0 - " +y0 );
                System.out.println("x1 - " + x1 + " e y1 - " +y1 );
                System.out.println("newX - " + newX + " e newY - " +newY );
@@ -398,9 +402,34 @@ public class TrabalhoPratico extends Application {
           
             }
         };
+        
+        EventHandler<ActionEvent> evento3 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                     if (player.getStatus()==PLAYING){
+                        player.stop(); 
+                         player.play();
+                     }else {
+                     player.play();
+    }
+              
+          
+            }
+        };
+        
+       EventHandler<ActionEvent> evento4 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+               player.stop();
+              
+          
+            }
+        };
 
         button.setOnAction(Evento);
         button2.setOnAction(evento2);
+        button3.setOnAction(evento3);
+        button4.setOnAction(evento4);
         Scene scene2 = new Scene(createContent());
         
         stage.setTitle("Alquerque");
@@ -410,7 +439,7 @@ public class TrabalhoPratico extends Application {
         
         
     }
-
+/**
     private Piece makePiece(PieceType type, int x, int y){
         Piece piece = new Piece(type, x, y);
         
@@ -447,8 +476,8 @@ public class TrabalhoPratico extends Application {
                         pieceGroupW.getChildren().remove(otherPiece);
                     }
                     atualizaDados();
-                    verificaFim(pieceGroupW.getChildren().size(), piece);
-                    verificaFim(pieceGroupB.getChildren().size(), piece);
+                 
+                    enviaDados();
                     break;
             }
             }  
@@ -456,7 +485,58 @@ public class TrabalhoPratico extends Application {
         
         return piece;
     }
-    
+    **/
+    private Piece makePiece(PieceType type, int x, int y) {
+        Piece piece = new Piece(type, x, y);
+
+        piece.setOnMouseReleased(e -> {
+            if (!piece.isMoveDisabled()) {
+                int newX = toBoard(piece.getLayoutX());
+                int newY = toBoard(piece.getLayoutY());
+
+                MoveResult result = tryMove(piece, newX, newY);
+
+                int x0 = toBoard(piece.getOldX());
+                int y0 = toBoard(piece.getOldY());
+
+                switch (result.getType()) {
+                    case None:
+                        piece.abortMove();
+                        break;
+                    case Normal:
+                        piece.x = newX;
+                        piece.y = newY;
+                        piece.move(newX, newY);
+                        board[x0][y0].setPiece(null);
+                        board[newX][newY].setPiece(piece);
+                        enviaDados();
+                        break;
+                    case Kill:
+                        piece.x = newX;
+                        piece.y = newY;
+                        piece.move(newX, newY);
+                        board[x0][y0].setPiece(null);
+                        board[newX][newY].setPiece(piece);
+                        Piece otherPiece = result.getPiece();
+                        if (otherPiece.getType() == PieceType.Black) {
+                            board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+                            pieceGroupB.getChildren().remove(otherPiece);
+                        } else {
+                            board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+                            pieceGroupW.getChildren().remove(otherPiece);
+                        }
+                        atualizaDados();
+                        enviaDados();
+                        verificaFim(pieceGroupW.getChildren().size(), piece);
+                        verificaFim(pieceGroupB.getChildren().size(), piece);
+                        break;
+                }
+            }
+        });
+
+        return piece;
+    }
+     
     public void verificaFim(int n,Piece piece){
         if (n == 0){ 
             a.setAlertType(Alert.AlertType.INFORMATION);
@@ -466,6 +546,40 @@ public class TrabalhoPratico extends Application {
                 a.setContentText("O Jogador 2 (Pretas) - foi o vencedor!");
             }  
             a.show(); //por favor funciona push
+        }
+    }
+    
+    public void enviaDados() {
+        try {
+            int qntPecas = this.pieceGroupB.getChildren().size() + this.pieceGroupW.getChildren().size(); 
+            csc.getDataOutputStream().writeInt(qntPecas);
+
+            // enviar peças pretas
+            for(Node nodePeca : this.pieceGroupB.getChildren()){
+                Piece peca = ((Piece)nodePeca);
+                // quantidade de valores do array (X,Y,COR)
+                csc.getDataOutputStream().writeInt(3);
+
+                csc.getDataOutputStream().writeInt(peca.x);
+                csc.getDataOutputStream().writeInt(peca.y);
+                csc.getDataOutputStream().writeInt(0);
+            }
+
+            // enviar peças brancas
+            for(Node nodePeca : this.pieceGroupW.getChildren()){
+                Piece peca = ((Piece)nodePeca);
+                // quantidade de valores do array (X,Y,COR)
+                csc.getDataOutputStream().writeInt(3);
+
+                csc.getDataOutputStream().writeInt(peca.x);
+                csc.getDataOutputStream().writeInt(peca.y);
+                csc.getDataOutputStream().writeInt(1);
+            }
+
+            // enviar
+            csc.getDataOutputStream().flush();
+        } catch(Exception e){
+            
         }
     }
     
@@ -487,8 +601,53 @@ public class TrabalhoPratico extends Application {
         launch(args);
     }
 
-  
-    
-    
-    
+    void adicionarPecasRecebidas(int[][] posicoesPecas){
+        ArrayList<Node> pPretas = new ArrayList();
+        ArrayList<Node> pBrancas = new ArrayList();
+        int x = 0;
+        int y = 0;
+        // para cada peça
+        for(int[] peca : posicoesPecas){
+            //System.out.println(peca[0] + " | " + peca[1] + " | " + peca[2]);
+            if(peca[2] == 0){
+                // preta
+                
+                Piece p = makePiece(PieceType.Black, peca[0], peca[1]);
+                if(playerID == 1)
+                    p.setMoveDisabled(true);
+                
+                else
+                    p.setMoveDisabled(false);
+                pPretas.add(p);
+            } else {
+                // branca
+                Piece p = makePiece(PieceType.White, peca[0], peca[1]);
+                if(playerID == 2)
+                    p.setMoveDisabled(true);
+                else
+                    p.setMoveDisabled(false);
+                pBrancas.add(p);
+            }
+        }
+
+        System.out.println(pieceGroupB.getChildren().size());
+        System.out.println(pieceGroupW.getChildren().size());
+                
+                
+        Platform.runLater(new Runnable() {
+            @Override public void run() {
+                // apagar
+                pieceGroupB.getChildren().clear();
+                pieceGroupW.getChildren().clear();
+                
+                // adicionar
+                pieceGroupB.getChildren().addAll(pPretas);
+                
+                pieceGroupW.getChildren().addAll(pBrancas);
+            }
+        });
+    }
 }
+    
+    
+    
