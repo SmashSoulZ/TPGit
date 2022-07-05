@@ -57,8 +57,9 @@ public class TrabalhoPratico extends Application {
     public static final int Width=5;
     public static final int Height=5;
     public static final Label label = new Label("padrao");
-    private Tile[][] board= new Tile[Width][Height];
-    
+    public  Tile[][] board = new Tile[Width][Height];
+    public  int x1;
+    public  int y1;
     private Group tileGroup = new Group();   
     private Group pieceGroupW = new Group();
     private Group pieceGroupB = new Group();
@@ -88,6 +89,7 @@ public class TrabalhoPratico extends Application {
         
      Circle circleBrancas = new Circle();
      Circle circlePretas = new Circle();
+    
      
      
     public void conectToServer(){
@@ -170,7 +172,22 @@ public class TrabalhoPratico extends Application {
 //                }
 //                if (piece != null){
 //                    tile.setPiece(piece);
-//                    pieceGroup.getChildren().add(piece);  
+//
+//                    if (tile.getPiece().getType() == PieceType.Black) {
+//                        //System.out.println("Peça preta com exito");
+//                        if(playerID == 1)
+//                            piece.setMoveDisabled(true);
+//                        else
+//                            piece.setMoveDisabled(false);
+//                        pieceGroupB.getChildren().add(piece);
+//                    } else {
+//                        //System.out.println("Peça branca com exito"); 
+//                        if(playerID == 2)
+//                            piece.setMoveDisabled(true);
+//                        else
+//                            piece.setMoveDisabled(false);
+//                        pieceGroupW.getChildren().add(piece);
+//                    }
 //                }   
                 if (y <= 0) {
                     piece = makePiece(PieceType.Black, x, y);
@@ -223,13 +240,15 @@ public class TrabalhoPratico extends Application {
         labelPre.setLayoutY(90);
         labelPec.setFont(new Font("Verdana", 18));
         
+        
+        //Suas Peças
         if(this.playerID==1){
             circleBrancas.setCenterX(560);
             circleBrancas.setCenterY(250);
             circleBrancas.setRadius(30);
-            circlePretas.setFill(Color.WHITE);
+            circleBrancas.setFill(Color.WHITE);
         }else{
-           circlePretas.setCenterX(560);
+            circlePretas.setCenterX(560);
             circlePretas.setCenterY(250);
             circlePretas.setRadius(30); 
             circlePretas.setFill(Color.BLACK);
@@ -248,31 +267,31 @@ public class TrabalhoPratico extends Application {
     
     private MoveResult tryMove(Piece piece, int newX, int newY){
         if (board[newX][newY].hasPiece()){
-            
+                System.out.println("None");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
-            Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+            Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
             MediaPlayer move = new MediaPlayer(media); 
             move.play();
                        
             System.out.println("Turnos feitos: " + turnsMade);
             
-             if (this.playerID==1){
-                 
-            for (Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(true);
-                }
-                for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(true);
-            }}
-            if (this.playerID==2){
-            for (Node p : pieceGroupW.getChildren()){
-                    ((Piece)p).setMoveDisabled(true);
-                }
-                for(Node p : pieceGroupB.getChildren()){
-                    ((Piece)p).setMoveDisabled(true);
-            }}
-            
+//             if (this.playerID==1){
+//                 
+//            for (Node p : pieceGroupW.getChildren()){
+//                    ((Piece)p).setMoveDisabled(true);
+//                }
+//                for(Node p : pieceGroupB.getChildren()){
+//                    ((Piece)p).setMoveDisabled(true);
+//            }}
+//            if (this.playerID==2){
+//            for (Node p : pieceGroupW.getChildren()){
+//                    ((Piece)p).setMoveDisabled(true);
+//                }
+//                for(Node p : pieceGroupB.getChildren()){
+//                    ((Piece)p).setMoveDisabled(true);
+//            }}
+//            
             return new MoveResult(MoveType.None);
             
         }
@@ -280,10 +299,11 @@ public class TrabalhoPratico extends Application {
        int y0 = toBoard(piece.getOldY());
        
        if ((Math.abs(newX - x0) == 0 && Math.abs(newY - y0) == 1) || (Math.abs(newY - y0) == 0 && Math.abs(newX - x0) == 1) || (Math.abs(newX - x0) == 1 && Math.abs(newY - y0) != 2) ){
-          this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
+                
+           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
           turnsMade++;
           System.out.println("Turnos feitos: " + turnsMade);
-          Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+          Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
             if (this.playerID==1){
@@ -300,13 +320,14 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
             }}
-            
+            System.out.println("Normal");
            return new MoveResult(MoveType.Normal);
-       } else if (Math.abs(newY - y0) == 2 && !(Math.abs(newX - x0) == 1) || Math.abs(newX - x0) == 2 && !(Math.abs(y0 - newY) == 1)) {
            
+       } else if (Math.abs(newY - y0) == 2 && !(Math.abs(newX - x0) == 1) || Math.abs(newX - x0) == 2 && !(Math.abs(y0 - newY) == 1)) {
+                System.out.println("Pre Kill");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
-            Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
+            Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
             System.out.println("Turnos feitos: " + turnsMade);
@@ -317,14 +338,22 @@ public class TrabalhoPratico extends Application {
                 for(Node p : pieceGroupB.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
             }}
-           int x1 = x0 + (newX - x0) / 2;
-           int y1 = y0 + (newY - y0) / 2;
+           x1 = x0 + (newX - x0) / 2;
+           y1 = y0 + (newY - y0) / 2;
            
+           System.out.println("piece.getType() " + piece.getType() + " board[x0][y0].getPiece() "+ board[x0][y0].getPiece() + " board[x0][y0].hasPiece() "+ board[y0][y0].hasPiece());
+           System.out.println("x0 - " + x0 + " e y0 - " + y0 );
            
+           System.out.println(" board[x1][y1].getPiece() "+ board[x1][y1].getPiece() + " board[x1][y1].hasPiece() "+ board[x1][y1].hasPiece());
+           System.out.println("x1 - " + x1 + " e y1 - " + y1 );
+           
+
            if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
+               System.out.println("Kill");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
             System.out.println("Turnos feitos: " + turnsMade);
+            
                if (this.playerID==1){
             for (Node p : pieceGroupW.getChildren()){
                     ((Piece)p).setMoveDisabled(true);
@@ -343,10 +372,10 @@ public class TrabalhoPratico extends Application {
                System.out.println("x1 - " + x1 + " e y1 - " +y1 );
                System.out.println("newX - " + newX + " e newY - " +newY );
                
-                Media media2 = new Media("file:/C:/Users/35191/Documents/captura.mp3"); //replace /Movies/test.mp3 with your file
+                Media media2 = new Media("file:/C:/Users/ferna/captura.mp3"); //replace /Movies/test.mp3 with your file
                 MediaPlayer captura = new MediaPlayer(media2); 
                 captura.play();
-        
+                
         
                return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
            }
@@ -367,7 +396,7 @@ public class TrabalhoPratico extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
         
-        Media media4 = new Media("file:/C:/Users/35191/Documents/background.mp3"); //replace /Movies/test.mp3 with your file
+        Media media4 = new Media("file:/C:/Users/ferna/background.mp3"); //replace /Movies/test.mp3 with your file
         MediaPlayer player = new MediaPlayer(media4); 
         player.play();
         
@@ -510,6 +539,7 @@ public class TrabalhoPratico extends Application {
                         board[x0][y0].setPiece(null);
                         board[newX][newY].setPiece(piece);
                         enviaDados();
+                        System.out.println("MK Move Normal");
                         break;
                     case Kill:
                         piece.x = newX;
@@ -527,9 +557,28 @@ public class TrabalhoPratico extends Application {
                         }
                         atualizaDados();
                         enviaDados();
+                        System.out.println("MK Move Kill");
                         verificaFim(pieceGroupW.getChildren().size(), piece);
                         verificaFim(pieceGroupB.getChildren().size(), piece);
                         break;
+//                    case Kill:
+//                    piece.move(newX, newY);
+//                    board[x0][y0].setPiece(null);
+//                    board[newX][newY].setPiece(piece);
+//                    
+//                    Piece otherPiece = result.getPiece();
+//                    if (otherPiece.getType() == PieceType.Black){
+//                        board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+//                        pieceGroupB.getChildren().remove(otherPiece);
+//                    } else {
+//                        board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+//                        pieceGroupW.getChildren().remove(otherPiece);
+//                    }
+//                    atualizaDados();
+//                 
+//                    enviaDados();
+//                    break;
+
                 }
             }
         });
@@ -575,6 +624,7 @@ public class TrabalhoPratico extends Application {
                 csc.getDataOutputStream().writeInt(peca.y);
                 csc.getDataOutputStream().writeInt(1);
             }
+            
 
             // enviar
             csc.getDataOutputStream().flush();
