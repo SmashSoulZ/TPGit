@@ -60,6 +60,12 @@ public class TrabalhoPratico extends Application {
     public  Tile[][] board = new Tile[Width][Height];
     public  int x1;
     public  int y1;
+    public double x1d;  
+    public double y1d;
+    public double oldXPC;
+    public double oldYPC;
+    public int oldXInt;
+    public int oldYInt;
     private Group tileGroup = new Group();   
     private Group pieceGroupW = new Group();
     private Group pieceGroupB = new Group();
@@ -69,6 +75,8 @@ public class TrabalhoPratico extends Application {
     private int otherPlayer; 
     private int turnsMade;
     private int player;
+    
+    public int idmorto;
     
  
     
@@ -341,16 +349,50 @@ public class TrabalhoPratico extends Application {
            x1 = x0 + (newX - x0) / 2;
            y1 = y0 + (newY - y0) / 2;
            
-           System.out.println("piece.getType() " + piece.getType() + " board[x0][y0].getPiece() "+ board[x0][y0].getPiece() + " board[x0][y0].hasPiece() "+ board[y0][y0].hasPiece());
-           System.out.println("x0 - " + x0 + " e y0 - " + y0 );
+           x1d=x1*100;  
+           y1d=y1*100; 
            
-           System.out.println(" board[x1][y1].getPiece() "+ board[x1][y1].getPiece() + " board[x1][y1].hasPiece() "+ board[x1][y1].hasPiece());
+            
+           
+           oldXPC = pieceGroupW.getChildren().get(1).getLayoutX();
+           oldYPC = pieceGroupW.getChildren().get(1).getLayoutY();
+           oldXInt=(int)oldXPC;
+           oldYInt=(int)oldYPC;
+           
+                   
+                   
            System.out.println("x1 - " + x1 + " e y1 - " + y1 );
+           System.out.println("oldXPC " + oldXPC );
+           System.out.println("oldX " + board[x0][y0].getPiece().getOldX());
            
-           System.out.println(pieceGroupW);
-
+           
+                   
+           System.out.println(pieceGroupW.getChildren().get(1).getLayoutX());   
+           System.out.println(x1d);
+           System.out.println(pieceGroupW.getChildren().get(1).getLayoutY());
+           System.out.println(y1d);
+           
+           int q;
+           if (this.playerID == 1){
+              for(q = 0; q < 4; q++){
+               
+                if (pieceGroupB.getChildren().get(q).getLayoutX() == x1d && pieceGroupB.getChildren().get(q).getLayoutY() == y1d){
+                    idmorto=q;
+                }
+            }
+           } else {
+                   for(q = 0; q < 4; q++){
+               
+                if (pieceGroupW.getChildren().get(q).getLayoutX() == x1d && pieceGroupW.getChildren().get(q).getLayoutY() == y1d){
+                    idmorto=q;
+                }
+                }
+              
+           }
+          
+            System.out.println("idmorto - " + idmorto);
            //if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
-           if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
+           if ((pieceGroupW.getChildren().get(idmorto).getLayoutX() == x1d && pieceGroupW.getChildren().get(idmorto).getLayoutY() == y1d) || (pieceGroupB.getChildren().get(idmorto).getLayoutX() == x1d && pieceGroupB.getChildren().get(idmorto).getLayoutY() == y1d) ){
                System.out.println("Kill");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
@@ -377,9 +419,8 @@ public class TrabalhoPratico extends Application {
                 Media media2 = new Media("file:/C:/Users/ferna/captura.mp3"); //replace /Movies/test.mp3 with your file
                 MediaPlayer captura = new MediaPlayer(media2); 
                 captura.play();
-                
-        
-               return new MoveResult(MoveType.Kill, board[x1][y1].getPiece());
+                enviaDados();
+               return new MoveResult(MoveType.Kill);
            }
        }
        
@@ -549,13 +590,12 @@ public class TrabalhoPratico extends Application {
                         piece.move(newX, newY);
                         board[x0][y0].setPiece(null);
                         board[newX][newY].setPiece(piece);
-                        Piece otherPiece = result.getPiece();
-                        if (otherPiece.getType() == PieceType.Black) {
-                            board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
-                            pieceGroupB.getChildren().remove(otherPiece);
+                        //board[oldXInt][oldYInt].setPiece(null);
+                        //System.out.println("board to board oldXpc"+ oldXPC + " - " + oldYPC);
+                        if (this.playerID == 1){
+                            pieceGroupB.getChildren().remove(idmorto);
                         } else {
-                            board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
-                            pieceGroupW.getChildren().remove(otherPiece);
+                            pieceGroupW.getChildren().remove(idmorto);
                         }
                         atualizaDados();
                         enviaDados();
@@ -570,7 +610,7 @@ public class TrabalhoPratico extends Application {
 //                    
 //                    Piece otherPiece = result.getPiece();
 //                    if (otherPiece.getType() == PieceType.Black){
-//                        board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+//                        board[][toBoard(otherPiece.getOldY())].setPiece(null);
 //                        pieceGroupB.getChildren().remove(otherPiece);
 //                    } else {
 //                        board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
