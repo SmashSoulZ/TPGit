@@ -276,11 +276,9 @@ public class TrabalhoPratico extends Application {
     private MoveResult tryMove(Piece piece, int newX, int newY){
         if (board[newX][newY].hasPiece()){
                 System.out.println("None");
-           this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
+           this.label.setText("Jogada Inválida. Repete!");
            turnsMade++;
-            Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
-            MediaPlayer move = new MediaPlayer(media); 
-            move.play();
+          
                        
             System.out.println("Turnos feitos: " + turnsMade);
             
@@ -311,7 +309,7 @@ public class TrabalhoPratico extends Application {
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
           turnsMade++;
           System.out.println("Turnos feitos: " + turnsMade);
-          Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
+          Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
             if (this.playerID==1){
@@ -335,7 +333,7 @@ public class TrabalhoPratico extends Application {
                 System.out.println("Pre Kill");
            this.label.setText("Fizeste a tua jogada. Espera pela jogada do jogador " + otherPlayer);
            turnsMade++;
-            Media media = new Media("file:/C:/Users/ferna/move.wav"); //replace /Movies/test.mp3 with your file
+            Media media = new Media("file:/C:/Users/35191/Documents/move.wav"); //replace /Movies/test.mp3 with your file
           MediaPlayer move = new MediaPlayer(media); 
           move.play();
             System.out.println("Turnos feitos: " + turnsMade);
@@ -416,7 +414,7 @@ public class TrabalhoPratico extends Application {
                System.out.println("x1 - " + x1 + " e y1 - " +y1 );
                System.out.println("newX - " + newX + " e newY - " +newY );
                
-                Media media2 = new Media("file:/C:/Users/ferna/captura.mp3"); //replace /Movies/test.mp3 with your file
+                Media media2 = new Media("file:/C:/Users/35191/Documents/captura.mp3"); //replace /Movies/test.mp3 with your file
                 MediaPlayer captura = new MediaPlayer(media2); 
                 captura.play();
                 enviaDados();
@@ -439,7 +437,7 @@ public class TrabalhoPratico extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
         
-        Media media4 = new Media("file:/C:/Users/ferna/background.mp3"); //replace /Movies/test.mp3 with your file
+        Media media4 = new Media("file:/C:/Users/35191/Documents/background.mp3"); //replace /Movies/test.mp3 with your file
         MediaPlayer player = new MediaPlayer(media4); 
         player.play();
         
@@ -731,7 +729,7 @@ public class TrabalhoPratico extends Application {
                 // apagar
                 pieceGroupB.getChildren().clear();
                 pieceGroupW.getChildren().clear();
-                
+                label.setText("O jogador " + otherPlayer + " jogou. É a tua vez!");
                 // adicionar
                 pieceGroupB.getChildren().addAll(pPretas);
                 

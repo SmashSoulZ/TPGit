@@ -53,8 +53,8 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        
-        String VUrl = "file:/C:/Users/ferna/Alquerque.mp4";
-        //String VUrl = "file:/C:/Users/35191/Documents/Alquerque.mp4";
+        //String VUrl = "file:/C:/Users/ferna/Alquerque.mp4";
+        String VUrl = "file:/C:/Users/35191/Documents/Alquerque.mp4";
         Media media = new Media(VUrl);
         mediaplayer = new MediaPlayer(media);
         mv.setFitHeight(400);
