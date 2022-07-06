@@ -59,16 +59,18 @@ public class ClientSideConnection {
 
                         // obter quantidade de elementos do array interno
                         novaspecas[x] = new int[dataIn.readInt()];
+                        System.out.println("novaspecas - "+novaspecas[x]);
                         // ler cada elemento interno
                         for(int y = 0; y < novaspecas[x].length; y++){
                             novaspecas[x][y] = dataIn.readInt();
+                            
                         }
                         
                     }
                     // adicionar novas peças
                     if(novaspecas.length > 0)
                         tp.adicionarPecasRecebidas(novaspecas);
-
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(ClientSideConnection.class.getName()).log(Level.SEVERE, null, ex);
                 }
