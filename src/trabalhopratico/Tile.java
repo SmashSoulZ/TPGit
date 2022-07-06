@@ -46,7 +46,7 @@ public class Tile extends Rectangle {
         
         setFill(light ? Color.valueOf("#6ad9ce") : Color.valueOf("#e0c86e"));
         
-        setOpacity(0.5);
+        //setOpacity(0.5);
     }
     
     
