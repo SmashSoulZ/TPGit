@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -171,32 +172,7 @@ public class TrabalhoPratico extends Application {
                 tileGroup.getChildren().add(tile);
 
                 Piece piece = null;
-
-//                if (y <= 1 || x <= 1 && y<=2){
-//                    piece = makePiece(PieceType.Black,x ,y);
-//                }
-//                if (y >= 3 || x >= 3 && y>=2){
-//                    piece = makePiece(PieceType.White,x ,y);
-//                }
-//                if (piece != null){
-//                    tile.setPiece(piece);
-//
-//                    if (tile.getPiece().getType() == PieceType.Black) {
-//                        //System.out.println("Peça preta com exito");
-//                        if(playerID == 1)
-//                            piece.setMoveDisabled(true);
-//                        else
-//                            piece.setMoveDisabled(false);
-//                        pieceGroupB.getChildren().add(piece);
-//                    } else {
-//                        //System.out.println("Peça branca com exito"); 
-//                        if(playerID == 2)
-//                            piece.setMoveDisabled(true);
-//                        else
-//                            piece.setMoveDisabled(false);
-//                        pieceGroupW.getChildren().add(piece);
-//                    }
-//                }   
+  
                 if (y <= 0) {
                     piece = makePiece(PieceType.Black, x, y);
                 }
@@ -275,7 +251,7 @@ public class TrabalhoPratico extends Application {
     
     private MoveResult tryMove(Piece piece, int newX, int newY){
         if (board[newX][newY].hasPiece()){
-                System.out.println("None");
+           System.out.println("None");
            this.label.setText("Jogada Inválida. Repete!");
            turnsMade++;
           
@@ -327,6 +303,7 @@ public class TrabalhoPratico extends Application {
                     ((Piece)p).setMoveDisabled(true);
             }}
             System.out.println("Normal");
+           
            return new MoveResult(MoveType.Normal);
            
        } else if (Math.abs(newY - y0) == 2 && !(Math.abs(newX - x0) == 1) || Math.abs(newX - x0) == 2 && !(Math.abs(y0 - newY) == 1)) {
@@ -418,17 +395,20 @@ public class TrabalhoPratico extends Application {
                 MediaPlayer captura = new MediaPlayer(media2); 
                 captura.play();
                 enviaDados();
+                
                return new MoveResult(MoveType.Kill);
+               
            }
        }
        
        
-       
+      
        return new MoveResult(MoveType.None);
     }
     
     private int toBoard(double pixel){
         return (int)(pixel+Tile_Size / 2) / Tile_Size;
+        
     }
     
     @Override
@@ -719,13 +699,15 @@ public class TrabalhoPratico extends Application {
                 pBrancas.add(p);
             }
         }
-
+        
         System.out.println(pieceGroupB.getChildren().size());
         System.out.println(pieceGroupW.getChildren().size());
                 
                 
         Platform.runLater(new Runnable() {
             @Override public void run() {
+                
+               
                 // apagar
                 pieceGroupB.getChildren().clear();
                 pieceGroupW.getChildren().clear();
@@ -734,6 +716,9 @@ public class TrabalhoPratico extends Application {
                 pieceGroupB.getChildren().addAll(pPretas);
                 
                 pieceGroupW.getChildren().addAll(pBrancas);
+                 pPretas.removeAll(pPretas);
+                pBrancas.removeAll(pBrancas);
+              
             }
         });
     }

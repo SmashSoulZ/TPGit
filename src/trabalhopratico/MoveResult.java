@@ -5,10 +5,6 @@
  */
 package trabalhopratico;
 
-/**
- *
- * @author MSI Gaming
- */
 public class MoveResult {
     
     private MoveType type;

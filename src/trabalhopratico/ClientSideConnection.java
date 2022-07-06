@@ -68,14 +68,18 @@ public class ClientSideConnection {
                     // adicionar novas peças
                     if(novaspecas.length > 0)
                         tp.adicionarPecasRecebidas(novaspecas);
-
+                       
                 } catch (IOException ex) {
                     Logger.getLogger(ClientSideConnection.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 System.out.println("DADOS RECEBIDOS");
+                   
+                 
             }
 
         }
+        
+       
     }
     
 }

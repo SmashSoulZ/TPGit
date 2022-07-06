@@ -11,10 +11,6 @@ import javafx.scene.shape.Ellipse;
 
 import static trabalhopratico.TrabalhoPratico.Tile_Size;
 
-/**
- *
- * @author MSI Gaming
- */
 public class Piece extends StackPane {
     private PieceType type;
     private boolean moveDisabled = false;
